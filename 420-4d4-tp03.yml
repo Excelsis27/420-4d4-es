@@ -1,3 +1,9 @@
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Cette partie renseigne le Dockerfile modifié et téléversé sur github (et par la suite automatiquement créé par Docker hub) pour afficher un siteweb avec 12 replicas différents
+# ------------------------------------------------------------
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,6 +28,11 @@ spec:
         - containerPort: 80
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Le service du siteweb qui permet celui-ci d'être accédé à partir de l'extérieur du serveur hôte
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: Service
@@ -38,6 +49,11 @@ spec:
       nodePort: 30080
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Renseigne un déploiement pour Nextcloud, avec un volume persistent et des variables d'environnements utilisant des secrets
+# ------------------------------------------------------------
 
 apiVersion: apps/v1
 kind: Deployment
@@ -101,6 +117,11 @@ spec:
           claimName: pvc-nextcloud
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Le volume persistent qui 'mount' un dossier sur l'hôte de l'application Nextcloud
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: PersistentVolume
@@ -118,6 +139,11 @@ spec:
     path: "/mnt/nextcloud"
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# La demande pour un volume persistent utilisé par Nextcloud
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -132,6 +158,11 @@ spec:
     - ReadWriteOnce
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Le service de Nextcloud qui permet celui-ci d'être accédé à partir de l'extérieur du serveur hôte
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: Service
@@ -148,6 +179,11 @@ spec:
       nodePort: 30081
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Renseigne un déploiement pour MariaDB avec des variables d'environnements utilisant des secrets
+# ------------------------------------------------------------
 
 apiVersion: apps/v1
 kind: Deployment
@@ -168,11 +204,6 @@ spec:
         ports:
         - containerPort: 3306
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom: 
-            secretKeyRef:
-              name: tp03-top-secret
-              key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_USER
           valueFrom: 
             secretKeyRef:
@@ -195,6 +226,11 @@ spec:
               key: MYSQL_HOST
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Le service de qui permet celui-ci d'être accédé à partir d'autres applications sur l'hôte (et pas sur l'internet directement!)
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: Service
@@ -209,22 +245,11 @@ spec:
       targetPort: 3306
 
 ---
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: tp03-top-secret
-type: Opaque
-data:
-  MYSQL_ROOT_PASSWORD: c2VjcmV0
-  MYSQL_DATABASE: bmV4dGNsb3Vk
-  MYSQL_USER: bmV4dGNsb3Vk
-  MYSQL_PASSWORD: c2VjcmV0
-  MYSQL_HOST: c2VydmljZS1tYXJpYWRiLW5leHRjbG91ZA==
-  NEXTCLOUD_ADMIN_USER: YWRtaW4=
-  NEXTCLOUD_ADMIN_PASSWORD: YWRtaW4=
-
----
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Renseigne un déploiement pour Mattermost
+# ------------------------------------------------------------
 
 apiVersion: apps/v1
 kind: Deployment
@@ -233,7 +258,6 @@ metadata:
   labels:
     app: mattermost
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app:  mattermost
@@ -249,6 +273,11 @@ spec:
         - containerPort: 8065
 
 ---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Le service de Mattermost qui permet celui-ci d'être accédé à partir de l'extérieur du serveur hôte
+# ------------------------------------------------------------
 
 apiVersion: v1
 kind: Service
@@ -263,3 +292,23 @@ spec:
       port: 8065
       targetPort: 8065
       nodePort: 30082
+
+---
+# ------------------------------------------------------------
+# Joseph André Lapointe-Decoste
+# 24 Mai 2021
+# Secrets pour la SGBD et Nextcloud
+# ------------------------------------------------------------
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tp03-top-secret
+type: Opaque
+data:
+  MYSQL_DATABASE: bmV4dGNsb3Vk
+  MYSQL_USER: bmV4dGNsb3Vk
+  MYSQL_PASSWORD: c2VjcmV0
+  MYSQL_HOST: c2VydmljZS1tYXJpYWRiLW5leHRjbG91ZA==
+  NEXTCLOUD_ADMIN_USER: YWRtaW4=
+  NEXTCLOUD_ADMIN_PASSWORD: YWRtaW4=
