@@ -1,5 +1,5 @@
 # Résumé du projet
-
+Un siteweb utilisant 12 replicas qui lie à Nextcloud, une application qui donne accès à des fichiers personnels et qui permet de partager ces fichiers ainsi que de monitorer les échanges de fichiers grâce à une base de donnée (en l'occurence MariaDB ici) de façon sécuritaire. On intègre aussi Mattermost, un serveur de clavardage, étant utilisé comme alternative à Slack.
 
 
 
