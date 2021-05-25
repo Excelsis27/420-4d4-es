@@ -1,0 +1,265 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tp03-deployment
+  labels: 
+    app: tp03
+spec:
+  replicas: 12
+  selector:
+    matchLabels:
+      app: tp03
+  template:
+    metadata:
+      labels:
+        app: tp03
+    spec:
+      containers:
+      - name: 420-4d4-es
+        image: excelsis/420-4d4-es
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-tp03
+spec:
+  selector:
+    app: tp03
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  labels: 
+    app: nextcloud
+spec:
+  selector:
+    matchLabels:
+      app: nextcloud
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+      - name: nextcloud
+        image: nextcloud
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: volume-nextcloud
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_PASSWORD
+        - name: MYSQL_HOST
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_HOST
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: NEXTCLOUD_ADMIN_USER
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: NEXTCLOUD_ADMIN_PASSWORD
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          value: "*.*.*.*"
+      volumes:
+      - name: volume-nextcloud
+        persistentVolumeClaim:
+          claimName: pvc-nextcloud
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-tp03
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: local
+  hostPath:
+    path: "/mnt/nextcloud"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nextcloud
+spec:
+  storageClassName: local
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-nextcloud
+spec:
+  selector:
+    app: nextcloud
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 80
+      nodePort: 30081
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-nextcloud
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: mariadb
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_USER
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom: 
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_DATABASE
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: tp03-top-secret
+              key: MYSQL_HOST
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-mariadb-nextcloud
+spec:
+  selector:
+    app: mariadb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tp03-top-secret
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: c2VjcmV0
+  MYSQL_DATABASE: bmV4dGNsb3Vk
+  MYSQL_USER: bmV4dGNsb3Vk
+  MYSQL_PASSWORD: c2VjcmV0
+  MYSQL_HOST: c2VydmljZS1tYXJpYWRiLW5leHRjbG91ZA==
+  NEXTCLOUD_ADMIN_USER: YWRtaW4=
+  NEXTCLOUD_ADMIN_PASSWORD: YWRtaW4=
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mattermost
+  labels:
+    app: mattermost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  mattermost
+  template:
+    metadata:
+      labels:
+        app:  mattermost
+    spec:
+      containers:
+      - name: conteneur-mattermost
+        image: mattermost/mattermost-preview
+        ports:
+        - containerPort: 8065
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-mattermost
+spec:
+  selector:
+    app: mattermost
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8065
+      targetPort: 8065
+      nodePort: 30082

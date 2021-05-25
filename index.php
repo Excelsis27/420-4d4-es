@@ -56,10 +56,10 @@
                 <div class="menu-menu-1-container">
                     <ul id="menu-menu-1" class="nav">
                         <li id="menu-item-26" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-26">
-                            <a href="#">Item1</a>
+                            <a href="http://192.168.2.9:30081/">Nextcloud</a>
                         </li>
                         <li id="menu-item-27" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-27">
-                            <a href="#">Item2</a>
+                            <a href="http://192.168.2.9:30082/">Mattermost</a>
                         </li>
                         <li id="menu-item-28" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-28">
                             <a href="http://ve2cuy.com/420-4d4b/index.php/planification-hebdomadaire/">420-4D4</a>
@@ -78,7 +78,7 @@
 
         <div class="article" class="post-5 page type-page status-publish hentry">
             <h1>
-                <a href="http://ve2cuy.com/">Déploiement K8s - version:es-1.0</a>
+                <a href="http://ve2cuy.com/">Déploiement K8s - version:latest</a>
             </h1>
             <div class="date"></div>
 
@@ -92,8 +92,8 @@
             <p></p>
 
             <h2>
-                <span class="has-inline-color has-pale-pink-color">Service par POD: </span>Inscrire ici le code php
-                <br/><span class="has-inline-color has-luminous-vivid-amber-color">Version du serveur web : </span>Inscrire ici le code php
+                <span class="has-inline-color has-pale-pink-color">Service par POD: </span><?php echo gethostname(); ?>
+                <br/><span class="has-inline-color has-luminous-vivid-amber-color">Version du serveur web : </span><?php echo $_SERVER['SERVER_SOFTWARE'] ?>
             </h2>
 
             <hr class="wp-block-separator"/>
@@ -104,9 +104,9 @@
             <p>
                 <a href="#">Ce site Web (12 duplicatas)</a>
                 <br/>
-                <a href="#">Item1</a>
+                <a href="http://192.168.2.9:30081/">Nextcloud</a>
                 <br/>
-                <a href="#">Item2</a>
+                <a href="http://192.168.2.9:30082/">Mattermost</a>
 
             <hr class="wp-block-separator"/>
 
