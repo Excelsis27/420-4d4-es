@@ -11,3 +11,6 @@ Il n'y en a pas vraiment eu, sauf que j'ai perdu beaucoup trop de temps sur un p
 J'ai aussi eu quelques difficultés avec le lien entre github et docker hub. J'ai fais un push du projet sur Github avant de faire le lien, donc l'automatisation de Docker Hub ne faisait pas le build pour le projet qui était déjà sur released sur Github.
 
 ![Screenshot](https://github.com/Excelsis27/420-4d4-es/raw/main/2021-05-24.png)
+
+
+### M-A-J par A.B.
